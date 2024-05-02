@@ -1,0 +1,44 @@
+name: Auto PR to Master on Label
+
+on:
+  pull_request:
+    types: [labeled]
+
+jobs:
+  auto-pr-to-master:
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'Release Branch PR'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0 # Fetch all history for all tags and branches
+
+    - name: Setup Git
+      run: |
+        git config --global user.name 'roadrunner-bot'
+        git config --global user.email 'roadrunner.bot@swiggy.in'
+
+    - name: Create new branch from master
+      run: |
+        git checkout master
+        git pull origin master
+        git checkout -b auto-pr-${{ github.event.pull_request.number }}-to-master
+
+    - name: Cherry-pick commits from PR
+      run: |
+        git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-${{ github.event.pull_request.number }}
+        git cherry-pick pr-${{ github.event.pull_request.number }}
+
+    - name: Push changes
+      run: |
+        git push origin auto-pr-${{ github.event.pull_request.number }}-to-master
+
+    - name: Create PR to master
+      uses: repo-sync/pull-request@v2
+      with:
+        source_branch: "auto-pr-${{ github.event.pull_request.number }}-to-master"
+        destination_branch: "master"
+        pr_title: "Auto PR to Master: ${{ github.event.pull_request.title }}"
+        pr_body: "Automatically created PR from PR #${{ github.event.pull_request.number }} with label."
+        github_token: ${{ secrets.GITHUB_TOKEN }}
