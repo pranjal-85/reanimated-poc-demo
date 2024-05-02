@@ -21,9 +21,9 @@ jobs:
 
     - name: Create new branch from master
       run: |
-        git checkout master
-        git pull origin master
-        git checkout -b auto-pr-${{ github.event.pull_request.number }}-to-master
+        git checkout main
+        git pull origin main
+        git checkout -b auto-pr-${{ github.event.pull_request.number }}-to-main
 
     - name: Cherry-pick commits from PR
       run: |
@@ -32,13 +32,13 @@ jobs:
 
     - name: Push changes
       run: |
-        git push origin auto-pr-${{ github.event.pull_request.number }}-to-master
+        git push origin auto-pr-${{ github.event.pull_request.number }}-to-main
 
     - name: Create PR to master
       uses: repo-sync/pull-request@v2
       with:
-        source_branch: "auto-pr-${{ github.event.pull_request.number }}-to-master"
-        destination_branch: "master"
+        source_branch: "auto-pr-${{ github.event.pull_request.number }}-to-main"
+        destination_branch: "main"
         pr_title: "Auto PR to Master: ${{ github.event.pull_request.title }}"
         pr_body: "Automatically created PR from PR #${{ github.event.pull_request.number }} with label."
         github_token: ${{ secrets.GITHUB_TOKEN }}
