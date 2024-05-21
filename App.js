@@ -25,9 +25,9 @@ const App = () => {
 
 const PreviewLayout = ({
   label,
+  selectedValue,
   children,
   values,
-  selectedValue,
   setSelectedValue,
 }) => (
   <View style={{ padding: 10, flex: 1 }}>
