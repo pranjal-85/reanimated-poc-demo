@@ -23,9 +23,8 @@ jobs:
 
       - name: Cherry-pick the merge commit
         run: |
-          git fetch origin main:main
           git checkout main
-          NEW_BRANCH="auto-pr-${{ github.event.pull_request.number }}-to-main"
+          git pull origin main
           git checkout -b auto-pr-${{ github.event.pull_request.number }}-to-main
           git cherry-pick ${{ github.event.pull_request.merge_commit_sha }}
           git push origin auto-pr-${{ github.event.pull_request.number }}-to-main
