@@ -39,3 +39,14 @@ jobs:
           pr_label: 'automated-pr'
           pr_assignee: ${{ github.event.pull_request.user.login }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Capture Milestone ID
+        if: github.event.pull_request.milestone
+        run: |
+          PR_NUMBER=$(echo "${{ steps.create_pr.outputs.pr_number }}")
+          curl \
+            -X PATCH \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}" \
+            -d '{"milestone": '${{ env.MILESTONE_ID }}'}'
