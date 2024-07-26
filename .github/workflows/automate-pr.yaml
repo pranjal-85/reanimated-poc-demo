@@ -27,9 +27,11 @@ jobs:
           git pull origin main
           git checkout -b auto-pr-${{ github.event.pull_request.number }}-to-main
           if ! git cherry-pick ${{ github.event.pull_request.merge_commit_sha }}; then
-            echo "Cherry-pick failed, resolving conflicts..."
+            echo "Cherry-pick failed, committing conflicts..."
             git add .
-            git cherry-pick --continue || true
+            git commit -m "Cherry-pick of PR #${{ github.event.pull_request.number }} failed with conflicts"
+          else
+            git push origin auto-pr-${{ github.event.pull_request.number }}-to-master
           fi
           git push origin auto-pr-${{ github.event.pull_request.number }}-to-main
 
