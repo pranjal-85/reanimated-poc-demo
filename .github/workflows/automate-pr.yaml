@@ -27,7 +27,6 @@ jobs:
           git pull origin main
           git checkout -b auto-pr-${{ github.event.pull_request.number }}-to-main
           echo "Attempting to cherry-pick ${{ github.event.pull_request.merge_commit_sha }}"
-          git config user.name ${{ github.actor }}
           if git cherry-pick -S -x --mainline 1 ${{ github.event.pull_request.merge_commit_sha }}; then
             echo "🎉 No conflicts! CP was a success, PR can be automerged 🎉"
             echo "HAS_CONFLICTS=false" >> "$GITHUB_OUTPUT"
